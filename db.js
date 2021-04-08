@@ -1,8 +1,11 @@
 const { Client } = require("pg");
+
 let client;
 
 const initDBClient = async () => {
-  client = new Client();
+  client = new Client({
+    connectionString: process.env.DATABASE_URL,
+  });
   await client.connect();
 };
 
