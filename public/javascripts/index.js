@@ -53,4 +53,4 @@ const updateCounter = () => {
 
 updateCounter();
 
-console.log("hey!");
+console.log("hey ho!");
