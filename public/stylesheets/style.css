@@ -1,0 +1,12 @@
+@import './reset.min.css';
+.vote {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.counter {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.visible {
+  opacity: 1;
+}
