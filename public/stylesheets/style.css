@@ -22,7 +22,6 @@ body {
   flex-direction: column;
 }
 canvas {
-  background-color: #00f;
   position: absolute;
   left: 0;
   top: 0;
