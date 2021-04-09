@@ -12,7 +12,9 @@ function timeToWait(req) {
 
 router.get("/", async (req, res, next) => {
   const dbClient = await getDBClient();
-  const votes = await dbClient.query("SELECT * from votes");
+  const votes = await dbClient.query(
+    "SELECT * from votes ORDER BY voted_at DESC"
+  );
   res.json({
     data: votes.rows,
   });

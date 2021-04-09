@@ -1,11 +1,150 @@
 @import './reset.min.css';
-.vote {
-  opacity: 0;
-  transition: opacity 0.3s ease;
+@font-face {
+  font-family: 'Gramatika Demo';
+  src: url("../fonts/GramatikaDemo-Regular.woff2") format('woff2'), url("../fonts/GramatikaDemo-Regular.woff") format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
-.counter {
+html {
+  font-size: 0.694444444444444vw;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+header {
+  position: relative;
+}
+body {
+  font-family: 'Gramatika Demo', Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+}
+canvas {
+  background-color: #00f;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+main {
+  flex: 1;
+  position: relative;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.6rem;
+}
+h1 {
+  font-size: 10rem;
+  font-weight: normal;
+  text-align: center;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.inverted {
+  background: #000;
+  color: #fff;
+}
+.text-m {
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.rounded {
+  border-radius: 3.2rem;
+}
+.button {
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.button:hover {
+  transform: scale(1.05);
+}
+.inactive {
+  pointer-events: none;
+}
+.concept {
+  padding: 2.1rem 2.2rem;
+  border: 0;
+  position: absolute;
+  right: 1.6rem;
+  top: 1.6rem;
+}
+.add-color {
+  padding: 2.1rem 0;
+  border: 0;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  cursor: pointer;
+  width: 22.4rem;
+}
+.add-color:disabled {
+  pointer-events: none;
+}
+.colors {
+  display: flex;
+  list-style-type: none;
+  border: 0;
+}
+.color {
+  border-radius: 9999px;
+  width: 6.4rem;
+  height: 6.4rem;
+  transition: transform 0.3s ease;
+}
+.color:hover {
+  transform: scale(1.2) !important;
+}
+.color + .color {
+  margin-left: 2.4rem;
+}
+.color.white {
+  border: 1px solid #000;
+  background-color: #fff;
+}
+.color.black {
+  background-color: #000;
+}
+.color.red {
+  background-color: #f00;
+}
+.color.orange {
+  background-color: #ff4d13;
+}
+.color.yellow {
+  background-color: #ffd100;
+}
+.color.green {
+  background-color: #009b3b;
+}
+.color.blue {
+  background-color: #37a4e3;
+}
+.color.deepblue {
+  background-color: #0018a8;
+}
+.color > input {
+  border: 0;
+  background: none;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border-radius: 9999px;
+  opacity: 0;
+  cursor: pointer;
+}
+.color.checked {
+  transform: scale(1.2);
+  pointer-events: none;
+}
+.color.unchecked {
+  transform: scale(0.5);
 }
 .visible {
   opacity: 1;
