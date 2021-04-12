@@ -58,9 +58,13 @@ form.addEventListener(
   false
 );
 
+const fixedLengthTimePart = (tp) => {
+  return tp < 10 ? `0${tp}` : `${tp}`;
+};
+
 const tsToTimeString = (ts) => {
-  const minutes = Math.round(ts / MINUTE_MS);
-  const seconds = Math.round((ts % MINUTE_MS) / SECOND_MS);
+  const minutes = fixedLengthTimePart(Math.round(ts / MINUTE_MS));
+  const seconds = fixedLengthTimePart(Math.round((ts % MINUTE_MS) / SECOND_MS));
   return `${minutes}:${seconds}`;
 };
 
