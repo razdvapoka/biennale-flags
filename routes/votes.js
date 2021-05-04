@@ -84,6 +84,14 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.delete("/", async (req, res, next) => {
+  const dbClient = await getDBClient();
+  await dbClient.query({
+    text: "DELETE FROM votes;",
+  });
+  res.send(200);
+});
+
 router.get("/ts", (req, res, next) => {
   res.json({ ts: timeToWait(req) });
 });

@@ -13,12 +13,36 @@ let timePassed = 0;
 let votesByDay = [];
 let context = null;
 
+const conceptButton = document.querySelector(".concept");
 const addColorButton = document.querySelector(".add-color");
 const colorButtons = document.querySelectorAll(".color > input");
 const colors = document.querySelector(".colors");
 const form = document.querySelector("form");
 const canvas = document.querySelector("canvas");
-var downloadLink = document.querySelector(".download-link");
+const downloadLink = document.querySelector(".download-link");
+const conceptBox = document.querySelector(".concept-box");
+const main = document.querySelector("main");
+const deleteButton = document.querySelector(".debug-delete");
+const dayCounter = document.querySelector(".day-counter");
+const voteCounter = document.querySelector(".vote-counter");
+
+const deleteVotes = () => {
+  fetch("/votes", {
+    method: "DELETE",
+  }).then(() => {
+    alert("your votes were successfully deleted, vote again!");
+  });
+};
+
+deleteButton.addEventListener("click", deleteVotes);
+
+const toggleConept = (e) => {
+  conceptBox.classList.toggle("concept-box-open");
+  main.classList.toggle("down");
+  conceptButton.classList.toggle("concept-close");
+};
+
+conceptButton.addEventListener("click", toggleConept);
 
 const downloadAsImage = () => {
   downloadLink.setAttribute("download", "world-wide-flag.png");
@@ -28,8 +52,6 @@ const downloadAsImage = () => {
   );
   downloadLink.click();
 };
-
-canvas.addEventListener("click", downloadAsImage);
 
 const resetAddColorButton = () => {
   addColorButton.style.backgroundColor = BLACK;
@@ -66,8 +88,6 @@ const handleSubmitVote = (e) => {
       console.error("Error:", error);
     });
 };
-
-form.addEventListener("submit", handleSubmitVote, false);
 
 const fixedLengthTimePart = (tp) => {
   return tp < 10 ? `0${tp}` : `${tp}`;
@@ -184,16 +204,27 @@ const fetchVotes = () => {
     .then((votesData) => {
       votesByDay = votesData.data;
       renderFlag();
+      dayCounter.innerText = votesByDay.length;
+      const voteCount = votesByDay.reduce((sum, day) => sum + day.length, 0);
+      voteCounter.innerText = voteCount;
     });
 };
 
-updateCounter();
-fetchVotes();
-setupCanvas();
-
-setInterval(fetchVotes, 1000);
-
-window.addEventListener("resize", () => {
+const handleResize = () => {
   setCanvasSize();
   renderFlag();
-});
+};
+
+const init = () => {
+  updateCounter();
+  fetchVotes();
+  setupCanvas();
+
+  setInterval(fetchVotes, 1000);
+
+  form.addEventListener("submit", handleSubmitVote, false);
+  canvas.addEventListener("click", downloadAsImage);
+  window.addEventListener("resize", handleResize);
+};
+
+init();

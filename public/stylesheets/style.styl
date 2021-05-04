@@ -8,10 +8,14 @@
   font-style: normal
   font-display: swap
 
+a:visited
+  color: inherit
+
 html
   font-size: (10 / 1440) * 100vw
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
+  overflow: hidden
 
 header
   position: relative
@@ -33,6 +37,9 @@ canvas
 main
   flex: 1
   position: relative
+
+main.down
+  min-height: calc(100vh - 10rem - 9.6rem)
 
 footer
   display: flex
@@ -70,11 +77,41 @@ h1
   pointer-events: none
 
 .concept
-  padding: 2.1rem 2.2rem
+  padding: 2.1rem 0
   border: 0
   position: absolute
   right: 1.6rem
   top: 1.6rem
+  transition: width 0.3s ease
+  width: 14.3rem
+  cursor: pointer
+
+.concept-c
+  transition: opacity 0.15s ease 0.15s
+
+.concept-x
+  position: absolute
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+  display: flex
+  justify-content: center
+  align-items: center
+  opacity: 0
+  transition: opacity 0.15s ease
+  & > svg
+    width: 1.619rem
+    height: 1.619rem
+
+.concept-close
+  width: 6.4rem
+  .concept-c
+    transition: opacity 0.15s ease
+    opacity: 0
+  .concept-x
+    opacity: 1
+    transition: opacity 0.15s ease 0.15s
 
 .add-color
   padding: 2.1rem 0
@@ -151,3 +188,64 @@ h1
 
 .download-link
   display: none
+
+.concept-box
+  max-width: 84rem
+  margin: 0 auto
+  height: 0
+  overflow: hidden
+  transition: height 0.5s ease
+
+.concept-box-open
+  height: calc(100vh - 10rem - 3rem)
+  overflow: auto
+
+.concept-inner-box
+  padding-top: 1.4rem
+
+
+.concept-counters
+  display: flex
+  width: 100%
+  justify-content: center
+
+.concept-counter
+  display: flex
+  align-items: center
+  font-size: 2.2rem
+  line-height: (21.76/22)
+  letter-spacing: (40 / 1000em)
+  text-transform: uppercase
+
+.concept-counter + .concept-counter
+  margin-left: 10rem
+
+.concept-counter-label
+  margin-right: 0.77rem;
+
+.concept-counter-value
+  padding: 2.12rem 4.53rem 2.08rem
+  border: 1px solid black
+  border-radius: 3.2rem
+
+.concept-text
+  margin-top: 3rem
+  font-size: 3rem
+  line-height: (34/30)
+  text-align: center
+  & > p + p
+    margin-top: 3.4rem
+
+.concept-credits
+  display: flex
+  width: 100%
+  justify-content: center
+  font-size: 1.8rem
+  line-height: (34/18)
+  text-transform: uppercase
+  margin-top: 6rem
+  & > div + div
+    margin-left: 4rem
+
+fieldset
+  padding: 0
