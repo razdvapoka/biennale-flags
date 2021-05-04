@@ -7,9 +7,10 @@ const YELLOW = "#FFD100";
 const BLACK_BORDER = `1px solid ${BLACK}`;
 const NO_BORDER = "0";
 const ADD_COLOR_TEXT = "add color";
+const TRANSITION_FRACTION = 0.05;
 
 let timePassed = 0;
-let votes = [];
+let votesByDay = [];
 let context = null;
 
 const addColorButton = document.querySelector(".add-color");
@@ -17,6 +18,18 @@ const colorButtons = document.querySelectorAll(".color > input");
 const colors = document.querySelector(".colors");
 const form = document.querySelector("form");
 const canvas = document.querySelector("canvas");
+var downloadLink = document.querySelector(".download-link");
+
+const downloadAsImage = () => {
+  downloadLink.setAttribute("download", "world-wide-flag.png");
+  downloadLink.setAttribute(
+    "href",
+    canvas.toDataURL("image/png").replace("image/png", "image/octet-stream")
+  );
+  downloadLink.click();
+};
+
+canvas.addEventListener("click", downloadAsImage);
 
 const resetAddColorButton = () => {
   addColorButton.style.backgroundColor = BLACK;
@@ -25,38 +38,36 @@ const resetAddColorButton = () => {
   addColorButton.classList.add("inactive");
 };
 
-form.addEventListener(
-  "submit",
-  (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const color = data.get("color");
-    fetch("/votes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ color }),
+const handleSubmitVote = (e) => {
+  e.preventDefault();
+  const data = new FormData(form);
+  const color = data.get("color");
+  fetch("/votes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ color }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (!data.error) {
+        resetAddColorButton();
+        colors.classList.add("inactive");
+        colorButtons.forEach((cb) => {
+          cb.parentElement.classList.remove("checked", "unchecked");
+          cb.checked = false;
+        });
+      }
+      updateCounter();
+      fetchVotes();
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        if (!data.error) {
-          resetAddColorButton();
-          colors.classList.add("inactive");
-          colorButtons.forEach((cb) => {
-            cb.parentElement.classList.remove("checked", "unchecked");
-            cb.checked = false;
-          });
-        }
-        updateCounter();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  },
-  false
-);
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
+
+form.addEventListener("submit", handleSubmitVote, false);
 
 const fixedLengthTimePart = (tp) => {
   return tp < 10 ? `0${tp}` : `${tp}`;
@@ -124,25 +135,42 @@ const setupCanvas = () => {
   context = canvas.getContext("2d");
 };
 
-const renderVotes = () => {
-  if (votes.length > 1) {
-    const maxLen = canvas.width;
-    const aspect = canvas.height / canvas.width;
-    const angle = 0;
-    const gradient = context.createLinearGradient(
-      // the start of the gradient added to the center
-      canvas.width / 2 + Math.cos(angle) * maxLen * 0.5,
-      canvas.height / 2 + Math.sin(angle) * maxLen * 0.5 * aspect,
-      // the end of the gradient subtracted from the center
-      canvas.width / 2 - Math.cos(angle) * maxLen * 0.5,
-      canvas.height / 2 - Math.sin(angle) * maxLen * 0.5 * aspect
-    );
-    votes.forEach((vote, voteIndex) => {
-      gradient.addColorStop(voteIndex / (votes.length - 1), vote.color);
-    });
-    context.fillStyle = gradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+const renderFlag = () => {
+  votesByDay.forEach((votes, dayIndex) => {
+    renderVotes(votes, dayIndex, votesByDay.length);
+  });
+};
+
+const renderVotes = (votes, dayIndex, daysCount) => {
+  const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+  if (votes && votes.length > 0) {
+    if (votes.length > 1) {
+      const stops = votes.flatMap((vote, voteIndex) => {
+        const isFirstVote = voteIndex === 0;
+        const isLastVote = voteIndex === votes.length - 1;
+        const diff = isLastVote
+          ? 1 - vote.stop
+          : votes[voteIndex + 1].stop - vote.stop;
+        const tf = diff > TRANSITION_FRACTION ? TRANSITION_FRACTION : diff / 2;
+        const firstStop = isFirstVote ? 0 : vote.stop + tf;
+        const lastStop = isLastVote ? 1 : votes[voteIndex + 1].stop - tf;
+        return [
+          [firstStop, vote.color],
+          [lastStop, vote.color],
+        ];
+      });
+
+      stops.forEach((stop) => gradient.addColorStop(...stop));
+    } else {
+      const singleVote = votes[0];
+      gradient.addColorStop(0, singleVote.color);
+      gradient.addColorStop(1, singleVote.color);
+    }
   }
+  context.fillStyle = gradient;
+  const dayHeight = canvas.height / daysCount;
+  const y = dayHeight * dayIndex;
+  context.fillRect(0, y, canvas.width, dayHeight);
 };
 
 const fetchVotes = () => {
@@ -154,8 +182,8 @@ const fetchVotes = () => {
   })
     .then((response) => response.json())
     .then((votesData) => {
-      votes = votesData.data;
-      renderVotes();
+      votesByDay = votesData.data;
+      renderFlag();
     });
 };
 
@@ -163,7 +191,9 @@ updateCounter();
 fetchVotes();
 setupCanvas();
 
+setInterval(fetchVotes, 1000);
+
 window.addEventListener("resize", () => {
   setCanvasSize();
-  renderVotes();
+  renderFlag();
 });
