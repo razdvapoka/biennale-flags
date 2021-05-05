@@ -7,7 +7,7 @@ const YELLOW = "#FFD100";
 const BLACK_BORDER = `1px solid ${BLACK}`;
 const NO_BORDER = "0";
 const ADD_COLOR_TEXT = "add color";
-const TRANSITION_FRACTION = 0.05;
+const TRANSITION_FRACTION = 0.1;
 
 let timePassed = 0;
 let votesByDay = [];
