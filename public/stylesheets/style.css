@@ -141,7 +141,7 @@ h1 {
   transform: scale(1.2) !important;
 }
 .color + .color {
-  margin-left: 2.4rem;
+  margin-left: 2rem;
 }
 .color.white {
   border: 1px solid #000;
@@ -151,22 +151,28 @@ h1 {
   background-color: #000;
 }
 .color.red {
-  background-color: #f00;
+  background-color: #ff4c44;
 }
 .color.orange {
-  background-color: #ff4d13;
+  background-color: #ff8700;
 }
 .color.yellow {
   background-color: #ffd100;
 }
+.color.pink {
+  background-color: #ff88e6;
+}
+.color.lightblue {
+  background-color: #9adbf8;
+}
 .color.green {
-  background-color: #009b3b;
+  background-color: #04e2ac;
 }
 .color.blue {
-  background-color: #37a4e3;
+  background-color: #3e53f6;
 }
 .color.deepblue {
-  background-color: #0018a8;
+  background-color: #a300d8;
 }
 .color > input {
   border: 0;
