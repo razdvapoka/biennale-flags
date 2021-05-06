@@ -22,21 +22,21 @@ const canvas = document.querySelector("canvas");
 const downloadLink = document.querySelector(".download-link");
 const conceptBox = document.querySelector(".concept-box");
 const main = document.querySelector("main");
-const deleteButton = document.querySelector(".debug-delete");
+// const deleteButton = document.querySelector(".debug-delete");
 const dayCounter = document.querySelector(".day-counter");
 const voteCounter = document.querySelector(".vote-counter");
 
-const deleteVotes = () => {
-  fetch("/votes", {
-    method: "DELETE",
-  }).then(() => {
-    alert("your votes were successfully deleted, vote again!");
-  });
-};
+// const deleteVotes = () => {
+//   fetch("/votes", {
+//     method: "DELETE",
+//   }).then(() => {
+//     alert("your votes were successfully deleted, vote again!");
+//   });
+// };
 
-deleteButton.addEventListener("click", deleteVotes);
+// deleteButton.addEventListener("click", deleteVotes);
 
-const toggleConept = (e) => {
+const toggleConept = () => {
   conceptBox.classList.toggle("concept-box-open");
   main.classList.toggle("down");
   conceptButton.classList.toggle("concept-close");
