@@ -1,3 +1,5 @@
+process.env.TZ = "Europe/Rome";
+
 var express = require("express");
 var { getDBClient } = require("../db");
 var { WAIT_INTERVAL_MS } = require("../consts");
@@ -51,7 +53,7 @@ const processVotes = (votes) => {
   return votesWithStops;
 };
 
-router.get("/", async (req, res, next) => {
+router.get("/", async (_, res) => {
   const dbClient = await getDBClient();
   const votes = await dbClient.query(
     "SELECT * from votes ORDER BY voted_at DESC"
@@ -68,7 +70,7 @@ router.get("/", async (req, res, next) => {
   });
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
   if (timeToWait(req) > 0) {
     res.status(429).json({ error: "Try again later" });
   } else {
@@ -84,15 +86,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// router.delete("/", async (req, res, next) => {
-//   const dbClient = await getDBClient();
-//   await dbClient.query({
-//     text: "DELETE FROM votes;",
-//   });
-//   res.send(200);
-// });
-
-router.get("/ts", (req, res, next) => {
+router.get("/ts", (req, res) => {
   res.json({ ts: timeToWait(req) });
 });
 
