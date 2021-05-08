@@ -6,7 +6,9 @@ var { WAIT_INTERVAL_MS } = require("../consts");
 var getDayOfYear = require("date-fns/getDayOfYear");
 var differenceInMilliseconds = require("date-fns/differenceInMilliseconds");
 var set = require("date-fns/set");
-var compareAsc = require("date-fns/compareAsc");
+var max = require("date-fns/max");
+var subHours = require("date-fns/subHours");
+var set = require("date-fns/set");
 
 var router = express.Router();
 
@@ -26,9 +28,9 @@ const groupBy = (items, getGroupKey) => {
   }, {});
 };
 
-const processVotes = (votes) => {
-  const firstVoteTime = new Date(votes[votes.length - 1].voted_at);
-  const lastVoteTime = new Date(votes[0].voted_at);
+const processVotes = (votes, prevDayVotes) => {
+  const firstVoteTime = new Date(votes[0].voted_at);
+  const lastVoteTime = new Date(votes[votes.length - 1].voted_at);
   const currentTime = new Date();
   const finalTime =
     getDayOfYear(currentTime) > getDayOfYear(lastVoteTime)
@@ -38,25 +40,41 @@ const processVotes = (votes) => {
           seconds: 59,
         })
       : currentTime;
-  const totalTimeMS = differenceInMilliseconds(finalTime, firstVoteTime);
-  const votesWithStops = votes
-    .map((vote) => {
-      return {
-        ...vote,
-        stop:
-          1 -
-          differenceInMilliseconds(finalTime, new Date(vote.voted_at)) /
-            totalTimeMS,
-      };
-    })
-    .sort((v1, v2) => compareAsc(new Date(v1.voted_at), new Date(v2.voted_at)));
+
+  let transitionVote = null;
+  if (prevDayVotes) {
+    const lastPrevDayVote = prevDayVotes[prevDayVotes.length - 1];
+    transitionVote = {
+      ...lastPrevDayVote,
+      voted_at: max([
+        subHours(firstVoteTime, 1),
+        set(firstVoteTime, { hours: 0, minutes: 0, seconds: 1 }),
+      ]),
+    };
+  }
+
+  const totalTimeMS = differenceInMilliseconds(
+    finalTime,
+    transitionVote ? new Date(transitionVote.voted_at) : firstVoteTime
+  );
+
+  const finalVotes = transitionVote ? [transitionVote, ...votes] : votes;
+  const votesWithStops = finalVotes.map((vote) => {
+    return {
+      ...vote,
+      stop:
+        1 -
+        differenceInMilliseconds(finalTime, new Date(vote.voted_at)) /
+          totalTimeMS,
+    };
+  });
   return votesWithStops;
 };
 
 router.get("/", async (_, res) => {
   const dbClient = await getDBClient();
   const votes = await dbClient.query(
-    "SELECT * from votes ORDER BY voted_at DESC"
+    "SELECT * from votes ORDER BY voted_at ASC"
   );
   const votesByDay = groupBy(votes.rows, (vote) =>
     getDayOfYear(new Date(vote.voted_at))
@@ -64,7 +82,12 @@ router.get("/", async (_, res) => {
   const sortedDays = Object.keys(votesByDay)
     .map((day) => parseInt(day))
     .sort((d1, d2) => (d1 > d2 ? 1 : -1));
-  const votesWithStops = sortedDays.map((day) => processVotes(votesByDay[day]));
+  const votesWithStops = sortedDays.map((day, dayIndex) =>
+    processVotes(
+      votesByDay[day],
+      dayIndex > 0 ? votesByDay[sortedDays[dayIndex - 1]] : null
+    )
+  );
   res.json({
     data: votesWithStops,
   });
