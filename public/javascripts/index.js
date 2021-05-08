@@ -250,7 +250,7 @@ const init = () => {
   fetchVotes();
   setupCanvas();
 
-  // setInterval(fetchVotes, 1000);
+  setInterval(fetchVotes, 1000);
 
   form.addEventListener("submit", handleSubmitVote, false);
   canvas.addEventListener("click", downloadAsImage);
