@@ -12,6 +12,10 @@ const TRANSITION_FRACTION = 0.1;
 let timePassed = 0;
 let votesByDay = [];
 let context = null;
+let isAnimating = false;
+const animated = {
+  lastVoteWidth: 0,
+};
 
 const conceptButton = document.querySelector(".concept");
 const addColorButton = document.querySelector(".add-color");
@@ -22,19 +26,8 @@ const canvas = document.querySelector("canvas");
 const downloadLink = document.querySelector(".download-link");
 const conceptBox = document.querySelector(".concept-box");
 const main = document.querySelector("main");
-// const deleteButton = document.querySelector(".debug-delete");
 const dayCounter = document.querySelector(".day-counter");
 const voteCounter = document.querySelector(".vote-counter");
-
-// const deleteVotes = () => {
-//   fetch("/votes", {
-//     method: "DELETE",
-//   }).then(() => {
-//     alert("your votes were successfully deleted, vote again!");
-//   });
-// };
-
-// deleteButton.addEventListener("click", deleteVotes);
 
 const toggleConept = () => {
   conceptBox.classList.toggle("concept-box-open");
@@ -60,6 +53,21 @@ const resetAddColorButton = () => {
   addColorButton.classList.add("inactive");
 };
 
+const animateLastVote = () => {
+  isAnimating = true;
+  anime({
+    targets: animated,
+    lastVoteWidth: 0.09,
+    direction: "alternate",
+    easing: "easeInOutSine",
+    duration: 200,
+    update: renderFlag,
+    complete: () => {
+      isAnimating = false;
+    },
+  });
+};
+
 const handleSubmitVote = (e) => {
   e.preventDefault();
   const data = new FormData(form);
@@ -82,7 +90,7 @@ const handleSubmitVote = (e) => {
         });
       }
       updateCounter();
-      fetchVotes();
+      fetchVotes().then(animateLastVote);
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -165,15 +173,28 @@ const renderVotes = (votes, dayIndex, daysCount) => {
   const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
   if (votes && votes.length > 0) {
     if (votes.length > 1) {
-      const stops = votes.flatMap((vote, voteIndex) => {
+      const isLastDay = dayIndex === daysCount - 1;
+      const votesWithUpdatedStops =
+        isLastDay && isAnimating
+          ? votes.map((vote) => {
+              return {
+                ...vote,
+                stop: vote.stop * (1 - animated.lastVoteWidth),
+              };
+            })
+          : votes;
+
+      const stops = votesWithUpdatedStops.flatMap((vote, voteIndex) => {
         const isFirstVote = voteIndex === 0;
-        const isLastVote = voteIndex === votes.length - 1;
+        const isLastVote = voteIndex === votesWithUpdatedStops.length - 1;
         const diff = isLastVote
           ? 1 - vote.stop
-          : votes[voteIndex + 1].stop - vote.stop;
+          : votesWithUpdatedStops[voteIndex + 1].stop - vote.stop;
         const tf = diff > TRANSITION_FRACTION ? TRANSITION_FRACTION : diff / 2;
         const firstStop = isFirstVote ? 0 : vote.stop + tf;
-        const lastStop = isLastVote ? 1 : votes[voteIndex + 1].stop - tf;
+        const lastStop = isLastVote
+          ? 1
+          : votesWithUpdatedStops[voteIndex + 1].stop - tf;
         return [
           [firstStop, vote.color],
           [lastStop, vote.color],
@@ -187,14 +208,15 @@ const renderVotes = (votes, dayIndex, daysCount) => {
       gradient.addColorStop(1, singleVote.color);
     }
   }
-  context.fillStyle = gradient;
+
   const dayHeight = canvas.height / daysCount;
   const y = dayHeight * dayIndex;
+  context.fillStyle = gradient;
   context.fillRect(0, y, canvas.width, dayHeight);
 };
 
 const fetchVotes = () => {
-  fetch("/votes", {
+  return fetch("/votes", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -203,10 +225,12 @@ const fetchVotes = () => {
     .then((response) => response.json())
     .then((votesData) => {
       votesByDay = votesData.data;
-      renderFlag();
       dayCounter.innerText = votesByDay.length;
       const voteCount = votesByDay.reduce((sum, day) => sum + day.length, 0);
       voteCounter.innerText = voteCount;
+      if (!isAnimating) {
+        renderFlag();
+      }
     });
 };
 
