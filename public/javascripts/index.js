@@ -28,6 +28,11 @@ const conceptBox = document.querySelector(".concept-box");
 const main = document.querySelector("main");
 const dayCounter = document.querySelector(".day-counter");
 const voteCounter = document.querySelector(".vote-counter");
+const openColorsButton = document.querySelector(".open-colors");
+
+openColorsButton.addEventListener("click", () => {
+  form.classList.add("colors-opened");
+});
 
 const toggleConept = () => {
   conceptBox.classList.toggle("concept-box-open");
@@ -88,6 +93,7 @@ const handleSubmitVote = (e) => {
           cb.parentElement.classList.remove("checked", "unchecked");
           cb.checked = false;
         });
+        form.classList.remove("colors-opened");
       }
       updateCounter();
       fetchVotes().then(animateLastVote);
@@ -244,7 +250,7 @@ const init = () => {
   fetchVotes();
   setupCanvas();
 
-  setInterval(fetchVotes, 1000);
+  // setInterval(fetchVotes, 1000);
 
   form.addEventListener("submit", handleSubmitVote, false);
   canvas.addEventListener("click", downloadAsImage);

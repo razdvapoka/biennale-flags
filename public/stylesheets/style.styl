@@ -8,6 +8,10 @@
   font-style: normal
   font-display: swap
 
+mobile()
+  @media (max-width: 600px)
+    {block}
+
 a, a:visited
   color: inherit
 
@@ -16,9 +20,13 @@ html
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   overflow: hidden
+  +mobile()
+    font-size: (10 / 375) * 100vw
 
 header
   position: relative
+  +mobile()
+    padding: 0.96rem 8rem 0.7rem
 
 body
   font-family: 'Gramatika Demo', Arial, Helvetica, sans-serif
@@ -33,6 +41,7 @@ canvas
   top: 0
   width: 100%
   height: 100%
+  pointer-events: none
 
 main
   flex: 1
@@ -46,6 +55,8 @@ footer
   justify-content: space-between
   align-items: center
   padding: 1.6rem
+  +mobile()
+    justify-content: center
 
 h1
   font-size: 10rem
@@ -54,6 +65,9 @@ h1
   letter-spacing: 0.02em
   line-height: 1
   text-transform: uppercase
+  +mobile()
+    font-size: 4.4rem
+    line-height: (36 / 44)
 
 .inverted
   background: black
@@ -82,12 +96,26 @@ h1
   position: absolute
   right: 1.6rem
   top: 1.6rem
-  transition: width 0.3s ease
+  transition: transform 0.2s ease, width 0.3s ease
   width: 14.3rem
   cursor: pointer
+  +mobile()
+    top: 1.53rem
+    width: 3rem
+    height: 3rem
+    padding: 0
+
+.concept-i
+  display: none
+  +mobile()
+    display: inline
+    text-transform: none
+    transition: opacity 0.15s ease 0.15s
 
 .concept-c
   transition: opacity 0.15s ease 0.15s
+  +mobile()
+    display: none
 
 .concept-x
   position: absolute
@@ -106,7 +134,10 @@ h1
 
 .concept-close
   width: 6.4rem
+  +mobile()
+    width: 3rem
   .concept-c
+  .concept-i
     transition: opacity 0.15s ease
     opacity: 0
   .concept-x
@@ -114,31 +145,77 @@ h1
     transition: opacity 0.15s ease 0.15s
 
 .add-color
+.open-colors
   padding: 2.1rem 0
   border: 0
   opacity: 0
   cursor: pointer
   width: 22.4rem
+  +mobile()
+    font-size: 2.6rem
+    line-height: (21.76 / 26)
+    width: 24rem
+    padding: 1.74rem 0 1.6rem
 
 .add-color:disabled
   pointer-events: none
+
+.add-color
+  +mobile()
+    display: none
+
+.open-colors
+  display: none
+  +mobile()
+    display: block
+
+.colors-opened
+  .open-colors
+    display: none
+  .add-color
+    display: block
 
 .colors
   display: flex
   list-style-type: none
   border: 0
+  padding: 0
+  margin: 0
+  +mobile()
+    display: none
+    padding: 0 10rem
+    position: fixed
+    left: 0
+    top: 8.8rem
+    width: 100vw
+    height: calc(100vh - 8.8rem - 8.74rem)
+    background-color: white
+    z-index: 50
+    flex-wrap: wrap
+    align-items: center
+    justify-content: space-between
+
+.colors-opened
+  .colors
+    +mobile()
+      display: flex
 
 .color
   border-radius: 9999px
   width: 6.4rem
   height: 6.4rem
   transition: transform 0.3s ease
+  +mobile()
+    width: 6rem
+    height: 6rem
 
 .color:hover
   transform: scale(1.2) !important
 
 .color + .color
   margin-left: 2rem
+  +mobile()
+    margin-left: 0
 
 .color.white
   border: 1px solid #000000
@@ -179,7 +256,7 @@ h1
   padding: 0
   margin: 0
   border-radius: 9999px
-  opacity: 0;
+  opacity: 0
   cursor: pointer
 
 .color.checked
@@ -199,16 +276,30 @@ h1
   height: 0
   overflow: hidden
   transition: height 0.5s ease
+  +mobile()
+    position: fixed
+    left: 0
+    top: 8.8rem
+    width: 100vw
+    height: calc(100vh - 8.8rem)
+    display: none
+    background-color: white
+    z-index: 100
 
 .concept-box-open
   height: calc(100vh - 10rem - 3rem)
   overflow: auto
+  +mobile()
+    display: block
+    height: calc(100vh - 8.8rem)
+
 
 .concept-inner-box
   padding-top: 1.4rem
   max-width: 84rem
   margin: 0 auto
-
+  +mobile()
+    padding-bottom: 6rem
 
 .concept-counters
   display: flex
@@ -222,17 +313,26 @@ h1
   line-height: (21.76/22)
   letter-spacing: (40 / 1000em)
   text-transform: uppercase
+  +mobile()
+    font-size: 1.8rem
+    line-height: 1
 
 .concept-counter + .concept-counter
   margin-left: 10rem
+  +mobile()
+    margin-left: 2.86rem
 
 .concept-counter-label
-  margin-right: 0.77rem;
+  margin-right: 0.77rem
+  +mobile()
+    margin-right: 0.5rem
 
 .concept-counter-value
   padding: 2.12rem 4.53rem 2.08rem
   border: 1px solid black
   border-radius: 3.2rem
+  +mobile()
+    padding: 1.19rem 2.17rem 1.01rem
 
 .concept-text
   margin-top: 3rem
@@ -241,6 +341,12 @@ h1
   text-align: center
   & > p + p
     margin-top: 3.4rem
+  +mobile()
+    font-size: 1.8rem
+    line-height: (22/18)
+    padding: 0 1.5rem
+    & > p + p
+      margin-top: 2.2rem
 
 .concept-credits
   display: flex
@@ -252,6 +358,18 @@ h1
   margin-top: 6rem
   & > div + div
     margin-left: 4rem
+  +mobile()
+    flex-direction: column
+    justify-content: flex-start
+    align-items: center
+    margin-top: 4rem
+    font-size: 1.3rem
+    line-height: 1
+    & > div + div
+      margin-left: 0
+      margin-top: 1.45rem
 
-fieldset
-  padding: 0
+form
+  +mobile()
+    legend
+      display: none
