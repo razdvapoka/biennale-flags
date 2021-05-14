@@ -8,6 +8,8 @@ const setCorrectVh = () => {
 // We listen to the resize event
 window.addEventListener("resize", setCorrectVh);
 
+setCorrectVh();
+
 const INTERVAL_MS = 1000;
 const SECOND_MS = 1000;
 const MINUTE_MS = SECOND_MS * 60;
