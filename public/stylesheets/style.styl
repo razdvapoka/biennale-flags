@@ -49,6 +49,7 @@ main
 
 main.down
   min-height: calc(100vh - 10rem - 9.6rem)
+  min-height: calc(var(--vh, 1vh) * 100 - 10rem - 9.6rem)
 
 footer
   display: flex
@@ -189,6 +190,7 @@ h1
     top: 8.8rem
     width: 100vw
     height: calc(100vh - 8.8rem - 8.74rem)
+    height: calc(var(--vh, 1vh) * 100 - 8.8rem - 8.74rem)
     background-color: white
     z-index: 50
     flex-wrap: wrap
@@ -282,16 +284,19 @@ h1
     top: 8.8rem
     width: 100vw
     height: calc(100vh - 8.8rem)
+    height: calc(var(--vh, 1vh) * 100  - 8.8rem)
     display: none
     background-color: white
     z-index: 100
 
 .concept-box-open
   height: calc(100vh - 10rem - 3rem)
+  height: calc(var(--vh, 1vh) * 100  - 10rem - 3rem)
   overflow: auto
   +mobile()
     display: block
     height: calc(100vh - 8.8rem)
+    height: calc(var(--vh, 1vh) * 100 - 8.8rem)
 
 
 .concept-inner-box
