@@ -34,12 +34,13 @@ body
   font-style: normal
   display: flex
   flex-direction: column
-  min-height: 100vh
-  height: 100vh
-  max-height: 100vh
-  min-height: calc(var(--vh, 1vh) * 100) !important
-  height: calc(var(--vh, 1vh) * 100) !important
-  max-height: calc(var(--vh, 1vh) * 100) !important
+  +mobile()
+    min-height: 100vh
+    height: 100vh
+    max-height: 100vh
+    min-height: calc(var(--vh, 1vh) * 100) !important
+    height: calc(var(--vh, 1vh) * 100) !important
+    max-height: calc(var(--vh, 1vh) * 100) !important
 
 canvas
   position: absolute
@@ -52,8 +53,6 @@ canvas
 main
   flex: 1
   position: relative
-
-main.down
   min-height: calc(100vh - 10rem - 9.6rem)
   min-height: calc(var(--vh, 1vh) * 100 - 10rem - 9.6rem)
 
