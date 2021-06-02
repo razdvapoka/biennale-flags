@@ -13,6 +13,8 @@ var set = require("date-fns/set");
 var router = express.Router();
 
 const timeToWait = (req) => {
+  console.log(req.hostname);
+  console.log(req.subdomains);
   return req.session && req.session.voteTS
     ? WAIT_INTERVAL_MS - (Date.now() - req.session.voteTS)
     : 0;
