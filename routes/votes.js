@@ -2,7 +2,11 @@ process.env.TZ = "Europe/Rome";
 
 var express = require("express");
 var { getDBClient } = require("../db");
-var { WAIT_INTERVAL_MS } = require("../consts");
+var {
+  DEFAULT_WAIT_INTERVAL_MS,
+  FLAG_WAIT_INTERVAL_MS,
+  STATUS_WAIT_INTERVAL_MS,
+} = require("../consts");
 var getDayOfYear = require("date-fns/getDayOfYear");
 var differenceInMilliseconds = require("date-fns/differenceInMilliseconds");
 var set = require("date-fns/set");
@@ -12,11 +16,17 @@ var set = require("date-fns/set");
 
 var router = express.Router();
 
+const getWaitInterval = (hostname) =>
+  hostname.startsWith("status")
+    ? STATUS_WAIT_INTERVAL_MS
+    : hostname.startsWith("flag")
+    ? FLAG_WAIT_INTERVAL_MS
+    : DEFAULT_WAIT_INTERVAL_MS;
+
 const timeToWait = (req) => {
-  console.log(req.hostname);
-  console.log(req.subdomains);
+  const waitInterval = getWaitInterval(req.hostname);
   return req.session && req.session.voteTS
-    ? WAIT_INTERVAL_MS - (Date.now() - req.session.voteTS)
+    ? waitInterval - (Date.now() - req.session.voteTS)
     : 0;
 };
 
@@ -105,6 +115,7 @@ router.post("/", async (req, res) => {
       values: [new Date(), req.body.color],
     });
     req.session.voteTS = Date.now();
+    req.session.maxAge = getWaitInterval(req.hostname);
     res.json({
       data: result.rows[0],
     });

@@ -8,9 +8,9 @@ var cookieSession = require("cookie-session");
 
 var indexRouter = require("./routes/index");
 var votesRouter = require("./routes/votes");
-var { WAIT_INTERVAL_MS } = require("./consts");
+var { DEFAULT_WAIT_INTERVAL_MS } = require("./consts");
 
-const isProduction = process.env.NODE_ENV === "production";
+// const isProduction = process.env.NODE_ENV === "production";
 
 var app = express();
 app.use(helmet());
@@ -19,10 +19,16 @@ app.use(
     name: "sessionId",
     secret: process.env.SECRET,
     // maxAge: 5 * 60 * 1000, // 5 minutes
-    maxAge: WAIT_INTERVAL_MS,
+    maxAge: DEFAULT_WAIT_INTERVAL_MS,
     // secure: isProduction,
   })
 );
+
+app.use(function (req, res, next) {
+  req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge;
+  next();
+});
+
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
