@@ -18,8 +18,7 @@ app.use(
   cookieSession({
     name: "sessionId",
     secret: process.env.SECRET,
-    // maxAge: 5 * 60 * 1000, // 5 minutes
-    maxAge: DEFAULT_WAIT_INTERVAL_MS,
+    maxAge: 5 * 60 * 1000, // 5 minutes
     // secure: isProduction,
   })
 );
