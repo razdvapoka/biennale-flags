@@ -382,3 +382,43 @@ form
   +mobile()
     legend
       display: none
+
+.alert
+  position: fixed
+  left: 50%
+  top: 50%
+  transform: translate(-50%, -50%)
+  padding: 2rem
+  padding-top: 1rem
+  font-size: 2.2rem
+  line-height: 1
+  letter-spacing: (40 / 1000em)
+  text-align: center
+  background-color: white
+  z-index: 100
+  text-transform: uppercase
+    
+.alert-text
+  +mobile()
+    white-space: nowrap
+
+.alert-icon
+  width: 1.6rem
+  height: 1.6rem
+  background-image: url(../x.svg)
+  background-repeat: no-repeat
+  background-size: cover
+  background-position: center
+  margin-bottom: 2rem
+  margin-left: auto
+  margin-right: auto
+  border: 0
+  background-color: transparent
+  padding: 0
+  cursor: pointer
+  
+.hidden
+  display: none
+  
+.hidden-perm
+  display: none
